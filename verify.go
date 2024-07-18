@@ -29,13 +29,6 @@ func main() {
 		line := scanner.Text()
 		matchesExpected(line, &expectedWrites)
 		matchesExpected(line, &expectedReads)
-		// if matchesExpected(line, &expectedWrites) {
-		// 	// fmt.Println("Found Write:", line)
-		// 	expectedWrites[line] = true
-		// } else if matchesExpected(line, &expectedReads) {
-		// 	// fmt.Println("Found Read:", line)
-		// 	expectedReads[line] = true
-		// }
 	}
 
 	if err := scanner.Err(); err != nil {

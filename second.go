@@ -68,6 +68,7 @@ func main() {
 			log.Fatalf("Error scanning row: %v\n", err)
 		}
 		data := fmt.Sprintf("Reader: id: %d, value: %s\n", id, value)
+		// fmt.Printf(data)
 		_, err := writer.Write([]byte(data))
 		if err != nil {
 			panic(err)
