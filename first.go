@@ -32,20 +32,20 @@ func main() {
 		value := fmt.Sprintf("Write %d", i)
 		_, err := db.Exec(`INSERT INTO test (value) VALUES (?)`, value)
 		if err != nil {
-			log.Fatalf("Error inserting value %s: %v\n", value, err)
+			log.Fatalf("First: Error inserting value %s: %v\n", value, err)
 		}
-		fmt.Printf("Writer: Inserted %s\n", value)
+		fmt.Printf("First: Inserted %s\n", value)
 	}
 	db.Close()
 
 	// Read operation
 	time.Sleep(1 * time.Second)
-	fmt.Println("Reader: Reading from DB:")
+	fmt.Println("First: Reading from DB:")
 	db, err = sql.Open("sqlite3", "file:./test.db?_mode=ro&_mutex=full&_busy_timeout=60000")
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println("Opened the DB")
+	fmt.Println("First: Opened the DB")
 	defer db.Close()
 
 	file, err := os.OpenFile("result.first.txt", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
@@ -55,12 +55,12 @@ func main() {
 	defer file.Close()
 	writer := io.Writer(file)
 
-	fmt.Println("Running SELECT query")
+	fmt.Println("First: Running SELECT query")
 	rows, err := db.Query(`SELECT id, value FROM test`)
 	if err != nil {
 		log.Fatalf("Error reading data: %v\n", err)
 	}
-	fmt.Println("Got response from SELECT query")
+	fmt.Println("First: Got response from SELECT query")
 
 	for rows.Next() {
 		var id int
@@ -69,16 +69,17 @@ func main() {
 		if err != nil {
 			log.Fatalf("Error scanning row: %v\n", err)
 		}
-		data := fmt.Sprintf("Reader: id: %d, value: %s\n", id, value)
+		data := fmt.Sprintf("First: id: %d, value: %s\n", id, value)
 		// fmt.Printf(data)
 		_, err := writer.Write([]byte(data))
 		if err != nil {
 			panic(err)
 		}
 	}
+	fmt.Println("First: Finished reading from DB")
 
 	err = rows.Err()
 	if err != nil {
-		log.Fatalf("Error iterating rows: %v\n", err)
+		log.Fatalf("First: Error iterating rows: %v\n", err)
 	}
 }
